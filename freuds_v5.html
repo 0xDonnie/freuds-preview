@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Freuds Marketing v5</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,700&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--ora:#ff6a1a;--ora2:#e04e00;--ora3:#ff9558;--ora4:#b83c00;--bg:#0d0500;--bg2:#160800;--bg3:#1e0c02;--fg:#fce8d5;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--fg);font-family:'Montserrat',sans-serif;overflow-x:hidden;background-image:radial-gradient(ellipse at 50% 0%,rgba(184,60,0,.08) 0%,transparent 60%);}
+
+.nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;justify-content:space-between;align-items:center;padding:1.1rem 3rem;background:rgba(13,5,0,.94);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,106,26,.2);}
+.logo{font-size:11px;letter-spacing:.4em;text-transform:uppercase;font-weight:700;}
+.logo em{color:var(--ora);font-style:normal;}
+.nav-links{display:flex;gap:2.5rem;}
+.nav-links a{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(240,235,228,.28);text-decoration:none;transition:color .3s;font-weight:500;}
+.nav-links a:hover{color:var(--ora);}
+.nav-btn{font-size:10px;letter-spacing:.22em;text-transform:uppercase;background:linear-gradient(90deg,var(--ora2),var(--ora));color:#0d0500;border:none;padding:.65rem 1.6rem;cursor:pointer;font-family:'Montserrat',sans-serif;font-weight:700;}
+
+/* ── HERO PIN ── */
+.hero-pin-wrapper{height:350vh;position:relative;}
+.hero-sticky{position:sticky;top:0;height:100vh;overflow:hidden;display:grid;grid-template-columns:1fr 1fr;align-items:center;padding:80px 3rem 0;gap:3rem;border-bottom:1px solid rgba(255,106,26,.12);}
+
+/* ambient glow */
+.hero-glow{position:absolute;right:0;top:50%;transform:translateY(-50%);width:60%;height:120%;background:radial-gradient(ellipse at center,rgba(255,106,26,.12) 0%,rgba(184,60,0,.06) 45%,transparent 70%);pointer-events:none;z-index:0;transition:opacity .5s ease;}
+
+.hero-left{z-index:2;}
+.h-eyebrow{font-size:9px;letter-spacing:.5em;text-transform:uppercase;color:var(--ora);margin-bottom:2rem;font-weight:600;opacity:0;animation:fadeUp .6s ease .3s forwards;}
+.h-title{font-size:clamp(2.6rem,4.5vw,5rem);font-weight:900;line-height:1.0;text-transform:uppercase;letter-spacing:-.02em;}
+.clip{overflow:hidden;display:block;}
+.clip span{display:block;transform:translateY(108%);animation:slideUp .85s cubic-bezier(.16,1,.3,1) forwards;}
+.clip:nth-child(1) span{animation-delay:.4s;}
+.clip:nth-child(2) span{animation-delay:.54s;color:var(--ora3);}
+.clip:nth-child(3) span{animation-delay:.68s;}
+.clip:nth-child(4) span{animation-delay:.82s;}
+.h-sub{margin-top:2rem;font-size:12px;line-height:1.85;color:rgba(252,200,160,.45);max-width:380px;font-weight:400;opacity:0;animation:fadeUp .8s ease 1.05s forwards;}
+.h-kpis{margin-top:2.5rem;display:flex;gap:2.5rem;opacity:0;animation:fadeUp .7s ease 1.3s forwards;}
+.hk{border-left:2px solid rgba(255,106,26,.4);padding-left:.9rem;}
+.hk-val{font-size:1.6rem;font-weight:800;color:var(--ora);line-height:1;letter-spacing:-.02em;}
+.hk-lbl{font-size:8px;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,106,26,.35);margin-top:.3rem;font-weight:500;}
+
+.scroll-hint{position:absolute;bottom:2.5rem;left:3rem;display:flex;align-items:center;gap:.8rem;font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:rgba(240,235,228,.2);font-weight:500;opacity:0;animation:fadeUp .6s ease 1.6s forwards;}
+.sh-line{width:36px;height:1px;background:rgba(255,106,26,.3);overflow:hidden;position:relative;}
+.sh-line::after{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:var(--ora);animation:scanAnim 2s ease infinite;}
+@keyframes scanAnim{0%{left:-100%;}100%{left:100%;}}
+
+.scroll-progress{position:absolute;bottom:2.5rem;right:3rem;display:flex;align-items:center;gap:.8rem;opacity:0;animation:fadeUp .6s ease 1.8s forwards;}
+.sp-track{width:80px;height:1px;background:rgba(255,106,26,.12);}
+.sp-fill{height:100%;background:var(--ora);width:0%;}
+.sp-label{font-family:'DM Mono',monospace;font-size:8px;color:rgba(255,106,26,.35);min-width:30px;}
+
+/* ── MONITOR STAGE ── */
+.monitor-stage{position:relative;height:600px;perspective:1600px;z-index:1;overflow:visible;}
+
+.mon-wrap{position:absolute;will-change:transform;}
+.mon-wrap.left{left:-10px;top:50px;opacity:0;transform:rotateY(22deg) rotateX(4deg) scale(1.4) translateX(-900px);}
+.mon-wrap.center{left:50%;top:0px;z-index:3;opacity:0;transform:translateX(-50%) rotateX(6deg) translateY(-800px) scale(1.3);}
+.mon-wrap.right{right:-10px;top:60px;opacity:0;transform:rotateY(-22deg) rotateX(4deg) scale(1.4) translateX(900px);}
+
+.mon-wrap.floating.left{animation:floatL 5s ease-in-out infinite;}
+.mon-wrap.floating.center{animation:floatC 4.5s ease-in-out infinite;}
+.mon-wrap.floating.right{animation:floatR 5.5s ease-in-out infinite;}
+
+.mon-wrap:hover{z-index:10!important;}
+.mon-wrap.left:hover{transform:rotateY(8deg) rotateX(1deg) scale(.95) translateY(-10px)!important;animation:none!important;}
+.mon-wrap.center:hover{transform:translateX(-50%) rotateX(0deg) scale(1.05) translateY(-10px)!important;animation:none!important;}
+.mon-wrap.right:hover{transform:rotateY(-8deg) rotateX(1deg) scale(.92) translateY(-10px)!important;animation:none!important;}
+
+/* MONITOR SHELL */
+.monitor{display:flex;flex-direction:column;align-items:center;transform-style:preserve-3d;}
+.mon-body{background:linear-gradient(145deg,#2a1200,#180800);border:1px solid rgba(255,106,26,.35);border-radius:12px;padding:12px;position:relative;transition:box-shadow .5s ease;}
+.mon-body.lit{box-shadow:0 0 100px rgba(255,106,26,.28),0 0 200px rgba(232,78,0,.12),0 30px 80px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,106,26,.3);}
+.mon-body::before{content:'';position:absolute;inset:0;border-radius:11px;background:linear-gradient(135deg,rgba(255,106,26,.1) 0%,rgba(232,78,0,.04) 60%,transparent 100%);pointer-events:none;}
+.mon-bezel{background:#0f0400;border-radius:6px;overflow:hidden;position:relative;}
+.mon-screen{position:relative;background:#0a0200;overflow:hidden;}
+.mon-screen::after{content:'';position:absolute;top:-40%;left:0;right:0;height:30%;background:linear-gradient(to bottom,transparent,rgba(255,106,26,.02),transparent);animation:scanLine 5s ease-in-out infinite;pointer-events:none;z-index:10;}
+.mon-neck{background:linear-gradient(to bottom,#2a1200,#180800);margin:0 auto;clip-path:polygon(18% 0%,82% 0%,100% 100%,0% 100%);}
+.mon-base{background:linear-gradient(to bottom,#2a1200,#180800);border-radius:0 0 8px 8px;box-shadow:0 4px 16px rgba(0,0,0,.6);}
+.mon-base::before{content:'';display:block;height:3px;background:rgba(255,106,26,.12);border-radius:2px;margin:3px auto 0;}
+.mon-led{position:absolute;bottom:8px;right:14px;border-radius:50%;background:var(--ora);animation:pulse 2s ease infinite;box-shadow:0 0 8px rgba(255,106,26,.7);z-index:2;}
+
+/* SIZES */
+.mon-wrap.left .mon-body,.mon-wrap.left .mon-bezel{width:290px;}
+.mon-wrap.left .mon-bezel{padding:6px;}
+.mon-wrap.left .mon-screen{width:278px;height:185px;}
+.mon-wrap.left .mon-neck{width:34px;height:28px;}
+.mon-wrap.left .mon-base{width:130px;height:11px;}
+.mon-wrap.left .mon-base::before{width:65px;}
+.mon-wrap.left .mon-led{width:5px;height:5px;}
+
+.mon-wrap.center .mon-body,.mon-wrap.center .mon-bezel{width:380px;}
+.mon-wrap.center .mon-bezel{padding:7px;}
+.mon-wrap.center .mon-screen{width:366px;height:240px;}
+.mon-wrap.center .mon-neck{width:46px;height:34px;}
+.mon-wrap.center .mon-base{width:165px;height:12px;}
+.mon-wrap.center .mon-base::before{width:80px;}
+.mon-wrap.center .mon-led{width:6px;height:6px;}
+
+.mon-wrap.right .mon-body,.mon-wrap.right .mon-bezel{width:275px;}
+.mon-wrap.right .mon-bezel{padding:5px;}
+.mon-wrap.right .mon-screen{width:265px;height:178px;}
+.mon-wrap.right .mon-neck{width:32px;height:26px;}
+.mon-wrap.right .mon-base{width:125px;height:11px;}
+.mon-wrap.right .mon-base::before{width:60px;}
+.mon-wrap.right .mon-led{width:5px;height:5px;}
+
+/* SCREEN CONTENT */
+.scr-content{padding:.9rem;height:100%;display:flex;flex-direction:column;gap:.35rem;}
+.scr-hd{display:flex;justify-content:space-between;align-items:center;padding-bottom:.6rem;border-bottom:1px solid rgba(255,106,26,.2);}
+.scr-title{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.22em;text-transform:uppercase;color:#ff9558;}
+.scr-status{display:flex;align-items:center;gap:.3rem;font-family:'DM Mono',monospace;font-size:7px;color:rgba(255,106,26,.35);}
+.live-dot{width:5px;height:5px;border-radius:50%;background:var(--ora);animation:pulse 1.6s ease infinite;}
+.big-num{font-family:'Montserrat',sans-serif;font-size:2.4rem;font-weight:800;color:var(--ora);line-height:1;letter-spacing:-.03em;}
+.big-num.sm{font-size:1.6rem;}
+.sub-txt{font-family:'DM Mono',monospace;font-size:7px;color:rgba(252,180,120,.25);letter-spacing:.06em;}
+.bar-row{display:flex;align-items:center;gap:.5rem;}
+.bar-lbl{font-family:'DM Mono',monospace;font-size:7px;color:rgba(252,180,120,.4);width:56px;flex-shrink:0;}
+.bar-track{flex:1;height:6px;background:rgba(255,106,26,.12);}
+.bar-fill{height:100%;background:var(--ora);width:0;transition:width 1.4s cubic-bezier(.16,1,.3,1);}
+.bar-val{font-family:'DM Mono',monospace;font-size:7px;color:var(--ora);min-width:24px;text-align:right;}
+.mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:.45rem;}
+.mini-cell{background:rgba(184,60,0,.12);border:1px solid rgba(255,106,26,.2);padding:.5rem .6rem;}
+.mini-val{font-family:'Montserrat',sans-serif;font-size:.9rem;font-weight:700;color:var(--ora);line-height:1;}
+.mini-lbl{font-family:'DM Mono',monospace;font-size:6px;letter-spacing:.1em;text-transform:uppercase;color:rgba(252,180,120,.35);margin-top:.2rem;}
+.scr-canvas{width:100%;display:block;}
+.feed-wrap{display:flex;flex-direction:column;gap:.28rem;overflow:hidden;flex:1;min-height:0;}
+.feed-item{font-family:'DM Mono',monospace;font-size:7.5px;color:rgba(252,180,100,.35);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:0;animation:feedIn .3s ease forwards;}
+.feed-item em{color:var(--ora);font-style:normal;}
+.ph-row{display:flex;align-items:center;gap:0;margin-top:auto;}
+.ph-node{width:20px;height:20px;border-radius:50%;border:1px solid rgba(255,106,26,.35);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:6px;color:rgba(255,150,88,.5);flex-shrink:0;transition:all .4s;}
+.ph-node.on{background:var(--ora);border-color:var(--ora);color:#060606;}
+.ph-conn{flex:1;height:1px;background:rgba(255,106,26,.08);transition:background .4s;}
+.ph-conn.on{background:rgba(255,106,26,.4);}
+.roas-track{height:3px;background:rgba(255,106,26,.15);}
+.roas-fill{height:100%;background:var(--ora);width:0;transition:width 2.2s cubic-bezier(.16,1,.3,1);}
+.roas-ticks{display:flex;justify-content:space-between;margin-top:.3rem;}
+.roas-tick{font-family:'DM Mono',monospace;font-size:6px;color:rgba(255,106,26,.2);}
+
+/* TICKER */
+.ticker{background:linear-gradient(90deg,var(--ora4),var(--ora),var(--ora3),var(--ora),var(--ora4));padding:.75rem 0;overflow:hidden;}
+.tick-inner{display:flex;gap:0;width:max-content;animation:tick 22s linear infinite;}
+.t-i{display:flex;align-items:center;gap:1.5rem;padding:0 1.5rem;font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:#060606;font-weight:700;white-space:nowrap;}
+.t-dot{width:3px;height:3px;background:rgba(6,6,6,.3);border-radius:50%;}
+
+/* NUMBERS */
+.numbers{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid rgba(255,106,26,.12);background:linear-gradient(180deg,var(--bg2) 0%,var(--bg) 100%);}
+.num-cell{padding:3.5rem 3rem;border-right:1px solid rgba(255,106,26,.12);position:relative;overflow:hidden;}
+.num-cell:last-child{border-right:none;}
+.num-cell::after{content:'';position:absolute;bottom:0;left:0;width:0;height:2px;background:var(--ora);transition:width .9s ease;}
+.num-cell.go::after{width:100%;}
+.num-val{font-size:4rem;font-weight:900;color:var(--ora3);line-height:1;display:flex;align-items:baseline;gap:4px;letter-spacing:-.04em;}
+.num-val sup{font-size:1.3rem;color:var(--ora3);font-weight:700;}
+.num-lbl{font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:rgba(255,150,88,.45);margin-top:.7rem;font-weight:500;}
+
+/* PINNED PHASES */
+.pin-section{display:flex;border-bottom:1px solid rgba(255,106,26,.12);}
+.pin-left{width:40%;padding:7rem 3rem;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;justify-content:center;border-right:1px solid rgba(255,106,26,.15);background:linear-gradient(135deg,var(--bg2) 0%,var(--bg) 100%);}
+.pin-right{width:60%;background:linear-gradient(180deg,var(--bg3) 0%,var(--bg2) 100%);}
+.sec-label{font-size:9px;letter-spacing:.42em;text-transform:uppercase;color:var(--ora3);margin-bottom:.8rem;font-weight:600;}
+.pin-title{font-size:clamp(1.8rem,2.8vw,2.8rem);font-weight:800;line-height:1.08;color:var(--fg);margin-bottom:1.2rem;text-transform:uppercase;letter-spacing:-.02em;}
+.pin-title em{color:var(--ora);font-style:normal;}
+.pin-body{font-size:12px;line-height:1.9;color:rgba(252,200,160,.42);max-width:320px;}
+.phase-tabs{margin-top:2.5rem;display:flex;flex-direction:column;}
+.ptab{display:flex;align-items:center;gap:1rem;padding:.9rem 0;border-top:1px solid rgba(255,106,26,.15);cursor:pointer;transition:all .3s;}
+.ptab:last-child{border-bottom:1px solid rgba(255,106,26,.12);}
+.ptab-num{font-family:'DM Mono',monospace;font-size:9px;color:rgba(255,106,26,.2);min-width:26px;transition:color .3s;}
+.ptab-name{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(240,235,228,.22);transition:color .3s;font-weight:600;}
+.ptab-bar{flex:1;height:1px;background:rgba(255,106,26,.07);position:relative;overflow:hidden;}
+.ptab-bar-fill{position:absolute;top:0;left:0;height:100%;width:0;background:var(--ora);transition:width .3s ease;}
+.ptab.active .ptab-num{color:var(--ora);}
+.ptab.active .ptab-name{color:var(--fg);}
+.ptab.active .ptab-bar-fill{width:100%;}
+.ppanel{min-height:100vh;padding:7rem 4rem;display:flex;flex-direction:column;justify-content:center;border-bottom:1px solid rgba(255,106,26,.05);}
+.ppanel:last-child{border-bottom:none;}
+.pp-step{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.32em;text-transform:uppercase;color:rgba(255,106,26,.26);margin-bottom:1.5rem;}
+.pp-title{font-size:clamp(1.8rem,3vw,2.8rem);font-weight:800;color:var(--fg);line-height:1.06;margin-bottom:1.2rem;text-transform:uppercase;letter-spacing:-.02em;}
+.pp-title em{color:var(--ora);font-style:normal;}
+.pp-body{font-size:12px;line-height:1.9;color:rgba(252,200,160,.42);max-width:400px;margin-bottom:2rem;}
+.pp-monitor{display:flex;flex-direction:column;align-items:flex-start;}
+.pp-mon-body{background:linear-gradient(145deg,#2a1200,#150800);border:1px solid rgba(255,106,26,.3);border-radius:7px;padding:8px;box-shadow:0 0 30px rgba(255,106,26,.06),0 12px 40px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,106,26,.1);transform:rotateX(3deg) rotateY(-2deg);width:100%;position:relative;}
+.pp-bezel{background:#0f0400;border-radius:3px;overflow:hidden;padding:4px;}
+.pp-screen-inner{background:#0a0200;padding:.8rem;position:relative;overflow:hidden;}
+.pp-screen-inner::after{content:'';position:absolute;top:-40%;left:0;right:0;height:30%;background:linear-gradient(to bottom,transparent,rgba(255,106,26,.014),transparent);animation:scanLine 5s ease-in-out infinite;pointer-events:none;}
+.pp-neck{width:28px;height:20px;background:linear-gradient(to bottom,#2a1200,#180800);margin:0 auto;clip-path:polygon(20% 0%,80% 0%,100% 100%,0% 100%);}
+.pp-base{width:100px;height:8px;background:linear-gradient(to bottom,#2a1200,#180800);border-radius:0 0 5px 5px;}
+.pp-led{position:absolute;bottom:5px;right:8px;width:4px;height:4px;border-radius:50%;background:var(--ora);animation:pulse 2s ease infinite;box-shadow:0 0 5px rgba(255,106,26,.5);}
+.pp-kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.4rem;}
+.pp-kpi{background:rgba(184,60,0,.14);border:1px solid rgba(255,106,26,.22);padding:.55rem .7rem;}
+.pp-kpi-val{font-family:'Montserrat',sans-serif;font-size:.9rem;font-weight:700;color:var(--ora);line-height:1;}
+.pp-kpi-lbl{font-family:'DM Mono',monospace;font-size:6px;letter-spacing:.1em;text-transform:uppercase;color:rgba(240,235,228,.17);margin-top:.2rem;}
+
+/* ── CLIENTS ── */
+.clients{padding:8rem 3rem;background:linear-gradient(180deg,var(--bg3) 0%,var(--bg2) 100%);border-bottom:1px solid rgba(255,106,26,.12);}
+.clients-intro{max-width:680px;margin-bottom:1rem;}
+.clients-intro h2{font-size:clamp(2rem,3.5vw,3rem);font-weight:800;line-height:1.06;color:var(--fg);text-transform:uppercase;letter-spacing:-.02em;}
+.clients-intro h2 em{color:var(--ora);font-style:normal;}
+.clients-sub{font-size:13px;line-height:1.85;color:rgba(240,235,228,.35);margin-top:1rem;max-width:560px;font-weight:400;}
+.cli-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid rgba(255,106,26,.2);margin-top:3.5rem;}
+.cli{padding:2rem;border-right:1px solid rgba(255,106,26,.12);border-bottom:1px solid rgba(255,106,26,.12);position:relative;transition:background .3s;overflow:hidden;}
+.cli:hover{background:rgba(184,60,0,.14);}
+.cli::after{content:'';position:absolute;bottom:0;left:0;width:0;height:1px;background:var(--ora);transition:width .5s ease;}
+.cli:hover::after{width:100%;}
+.cli:nth-child(3n){border-right:none;}
+.cli:nth-last-child(-n+3){border-bottom:none;}
+.cli-logo{width:44px;height:44px;margin-bottom:1.2rem;opacity:.7;transition:opacity .3s;}
+.cli:hover .cli-logo{opacity:1;}
+.cli-ind{font-size:8px;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,106,26,.3);margin-bottom:.5rem;font-weight:600;}
+.cli-name{font-size:1.2rem;font-weight:800;color:var(--fg);margin-bottom:.6rem;letter-spacing:-.02em;line-height:1.1;}
+.cli-desc{font-size:11px;line-height:1.75;color:rgba(252,180,120,.4);}
+.cli-tag{display:inline-block;margin-top:.8rem;font-size:8px;letter-spacing:.18em;text-transform:uppercase;border:1px solid rgba(255,106,26,.16);color:rgba(255,106,26,.45);padding:.25rem .7rem;font-weight:600;}
+
+/* SERVICES */
+.services{padding:8rem 3rem;border-bottom:1px solid rgba(255,106,26,.1);background:linear-gradient(180deg,var(--bg) 0%,var(--bg2) 100%);}
+.sec-h{font-size:clamp(2rem,3.5vw,3rem);font-weight:800;line-height:1.06;color:var(--fg);margin-bottom:3.5rem;max-width:580px;text-transform:uppercase;letter-spacing:-.02em;}
+.sec-h em{color:var(--ora);font-style:normal;}
+.srv-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0;border:1px solid rgba(255,106,26,.2);}
+.srv{padding:2.5rem;border-right:1px solid rgba(255,106,26,.12);border-bottom:1px solid rgba(255,106,26,.12);position:relative;transition:background .3s;overflow:hidden;}
+.srv::after{content:'';position:absolute;bottom:0;left:0;width:0;height:1px;background:var(--ora);transition:width .5s ease;}
+.srv:hover::after{width:100%;}
+.srv:hover{background:rgba(184,60,0,.12);}
+.srv:nth-child(2n){border-right:none;}
+.srv:nth-child(n+3){border-bottom:none;}
+.srv-n{font-size:8px;letter-spacing:.35em;text-transform:uppercase;color:rgba(255,106,26,.25);margin-bottom:1rem;font-weight:600;}
+.srv-title{font-size:1.2rem;font-weight:700;color:var(--fg);margin-bottom:.8rem;line-height:1.2;text-transform:uppercase;letter-spacing:-.01em;}
+.srv-desc{font-size:12px;line-height:1.8;color:rgba(252,180,120,.38);}
+.srv-arr{position:absolute;bottom:1.8rem;right:2rem;font-size:1rem;color:rgba(255,106,26,.15);transition:all .3s;}
+.srv:hover .srv-arr{color:var(--ora);transform:translate(3px,-3px);}
+
+/* MARQUEE */
+.mq-wrap{padding:1.5rem 0;overflow:hidden;position:relative;border-top:1px solid rgba(255,106,26,.07);border-bottom:1px solid rgba(255,106,26,.12);}
+.mq-wrap::before,.mq-wrap::after{content:'';position:absolute;top:0;bottom:0;width:100px;z-index:2;}
+.mq-wrap::before{left:0;background:linear-gradient(to right,var(--bg),transparent);}
+.mq-wrap::after{right:0;background:linear-gradient(to left,var(--bg),transparent);}
+.mq{display:flex;gap:4rem;width:max-content;animation:mqAnim 26s linear infinite;}
+.mq-i{font-size:9px;letter-spacing:.32em;text-transform:uppercase;color:rgba(240,235,228,.12);white-space:nowrap;font-weight:600;}
+
+/* MANIFESTO */
+.manifesto{padding:10rem 3rem;position:relative;overflow:hidden;border-bottom:1px solid rgba(255,106,26,.1);background:linear-gradient(135deg,var(--bg2) 0%,var(--bg3) 60%,var(--bg2) 100%);}
+.mani-bg{position:absolute;right:-2rem;top:50%;transform:translateY(-50%);font-size:clamp(6rem,18vw,18rem);font-weight:900;color:rgba(255,106,26,.06);line-height:1;user-select:none;pointer-events:none;text-transform:uppercase;}
+.mani-q{font-size:clamp(1.8rem,3.5vw,3.2rem);font-weight:700;line-height:1.18;color:#fce8d5;max-width:740px;}
+.mani-q em{color:var(--ora);font-style:normal;font-weight:900;}
+.mani-attr{margin-top:2.5rem;display:flex;align-items:center;gap:1rem;}
+.m-line{width:30px;height:1px;background:var(--ora);}
+.m-txt{font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,106,26,.4);font-weight:600;}
+
+/* CTA */
+.cta{background:linear-gradient(135deg,var(--ora4) 0%,var(--ora) 45%,var(--ora3) 100%);padding:8rem 3rem;position:relative;overflow:hidden;}
+.cta-bg{position:absolute;right:-1rem;top:50%;transform:translateY(-50%);font-size:clamp(5rem,16vw,16rem);font-weight:900;color:rgba(8,8,8,.1);line-height:1;user-select:none;pointer-events:none;text-transform:uppercase;}
+.cta-lbl{font-size:9px;letter-spacing:.42em;text-transform:uppercase;color:rgba(8,8,8,.3);margin-bottom:.8rem;font-weight:600;}
+.cta-h{font-size:clamp(2.5rem,5.5vw,5.5rem);font-weight:900;line-height:1.02;color:#080808;max-width:640px;text-transform:uppercase;letter-spacing:-.03em;}
+.cta-h em{color:rgba(8,8,8,.2);font-style:normal;}
+.cta-row{margin-top:3rem;display:flex;align-items:center;gap:2rem;}
+.cta-btn{font-size:10px;letter-spacing:.22em;text-transform:uppercase;background:#080808;color:var(--ora);border:none;padding:1.1rem 2.2rem;cursor:pointer;font-family:'Montserrat',sans-serif;font-weight:700;}
+.cta-mail{font-family:'DM Mono',monospace;font-size:11px;color:rgba(8,8,8,.38);}
+
+.footer{padding:2rem 3rem;border-top:1px solid rgba(255,106,26,.2);background:var(--bg3);display:flex;justify-content:space-between;align-items:center;}
+.fl{font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:rgba(240,235,228,.18);font-weight:600;}
+.fl em{color:rgba(255,106,26,.36);font-style:normal;}
+.fc{font-family:'DM Mono',monospace;font-size:10px;color:rgba(240,235,228,.12);}
+
+.rev{opacity:0;transform:translateY(28px);transition:opacity .85s ease,transform .85s ease;}
+.rev.in{opacity:1;transform:none;}
+
+@keyframes slideUp{to{transform:translateY(0);}}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(16px);}100%{opacity:1;transform:none;}}
+@keyframes feedIn{to{opacity:1;}}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.2;}}
+@keyframes scanLine{0%{top:-40%;}100%{top:130%;}}
+@keyframes tick{to{transform:translateX(-50%);}}
+@keyframes mqAnim{to{transform:translateX(-50%);}}
+@keyframes floatL{0%,100%{transform:rotateY(18deg) rotateX(2deg) scale(.9) translateY(0);}50%{transform:rotateY(18deg) rotateX(2deg) scale(.9) translateY(-8px);}}
+@keyframes floatC{0%,100%{transform:translateX(-50%) rotateX(2deg) translateY(0);}50%{transform:translateX(-50%) rotateX(2deg) translateY(-10px);}}
+@keyframes floatR{0%,100%{transform:rotateY(-18deg) rotateX(2deg) scale(.87) translateY(0);}50%{transform:rotateY(-18deg) rotateX(2deg) scale(.87) translateY(-7px);}}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="logo">Freuds<em>.</em></div>
+  <div class="nav-links"><a href="#method">Method</a><a href="#services">Services</a><a href="#clients">Clients</a></div>
+  <button class="nav-btn">Start Now</button>
+</nav>
+
+<!-- HERO PIN -->
+<div class="hero-pin-wrapper" id="hero-pin">
+  <div class="hero-sticky" id="hero-sticky">
+    <div class="hero-glow" id="hero-glow"></div>
+
+    <div class="hero-left">
+      <p class="h-eyebrow">Dubai · Performance Marketing Agency</p>
+      <h1 class="h-title">
+        <span class="clip"><span>We don't run</span></span>
+        <span class="clip"><span>campaigns.</span></span>
+        <span class="clip"><span>We build machines</span></span>
+        <span class="clip"><span>that lead markets.</span></span>
+      </h1>
+      <p class="h-sub">Founded by the team behind FOLLOW Austria. Eight years of systems that turned Universal Pictures, BingX and Dominic Thiem into market leaders - now operating from Dubai.</p>
+      <div class="h-kpis">
+        <div class="hk"><div class="hk-val">&gt;2.0x</div><div class="hk-lbl">ROAS target</div></div>
+        <div class="hk"><div class="hk-val">1.5%</div><div class="hk-lbl">CTR target</div></div>
+        <div class="hk"><div class="hk-val">€1-3</div><div class="hk-lbl">CPF YouTube</div></div>
+      </div>
+    </div>
+
+    <div class="monitor-stage" id="stage">
+
+      <!-- LEFT: Funnel -->
+      <div class="mon-wrap left" id="mon-l">
+        <div class="monitor">
+          <div class="mon-body" id="mb-l">
+            <div class="mon-bezel"><div class="mon-screen">
+              <div class="scr-content">
+                <div class="scr-hd"><span class="scr-title">Funnel Flow</span><span class="scr-status"><span class="live-dot"></span>LIVE</span></div>
+                <div class="bar-row"><span class="bar-lbl">Ad Reach</span><div class="bar-track"><div class="bar-fill" data-w="100"></div></div><span class="bar-val">100%</span></div>
+                <div class="bar-row"><span class="bar-lbl">Landing</span><div class="bar-track"><div class="bar-fill" data-w="42"></div></div><span class="bar-val">42%</span></div>
+                <div class="bar-row"><span class="bar-lbl">Lead</span><div class="bar-track"><div class="bar-fill" data-w="18"></div></div><span class="bar-val">18%</span></div>
+                <div class="bar-row"><span class="bar-lbl">Call</span><div class="bar-track"><div class="bar-fill" data-w="9"></div></div><span class="bar-val">9%</span></div>
+                <div class="bar-row"><span class="bar-lbl">Close</span><div class="bar-track"><div class="bar-fill" data-w="4"></div></div><span class="bar-val">4%</span></div>
+                <div class="ph-row">
+                  <div class="ph-node" id="pn0">01</div><div class="ph-conn" id="pc0"></div>
+                  <div class="ph-node" id="pn1">02</div><div class="ph-conn" id="pc1"></div>
+                  <div class="ph-node" id="pn2">03</div><div class="ph-conn" id="pc2"></div>
+                  <div class="ph-node" id="pn3">04</div><div class="ph-conn" id="pc3"></div>
+                  <div class="ph-node" id="pn4">05</div>
+                </div>
+              </div>
+            </div></div>
+            <div class="mon-led"></div>
+          </div>
+          <div class="mon-neck"></div><div class="mon-base"></div>
+        </div>
+      </div>
+
+      <!-- CENTER: ROAS -->
+      <div class="mon-wrap center" id="mon-c">
+        <div class="monitor">
+          <div class="mon-body" id="mb-c">
+            <div class="mon-bezel"><div class="mon-screen">
+              <div class="scr-content">
+                <div class="scr-hd"><span class="scr-title">ROAS · Live</span><span class="scr-status"><span class="live-dot"></span>ACTIVE</span></div>
+                <div class="big-num" id="roas-n">0.0x</div>
+                <div class="sub-txt">Return on ad spend · target &gt;2.0x</div>
+                <div class="roas-track" style="margin-top:.5rem;"><div class="roas-fill" id="roas-fill"></div></div>
+                <div class="roas-ticks"><span class="roas-tick">0</span><span class="roas-tick">1.0x</span><span class="roas-tick">2.0x</span><span class="roas-tick">3.0x</span></div>
+                <canvas class="scr-canvas" id="chart-c" style="height:80px;margin-top:.6rem;"></canvas>
+              </div>
+            </div></div>
+            <div class="mon-led"></div>
+          </div>
+          <div class="mon-neck"></div><div class="mon-base"></div>
+        </div>
+      </div>
+
+      <!-- RIGHT: KPIs + feed -->
+      <div class="mon-wrap right" id="mon-r">
+        <div class="monitor">
+          <div class="mon-body" id="mb-r">
+            <div class="mon-bezel"><div class="mon-screen">
+              <div class="scr-content">
+                <div class="scr-hd"><span class="scr-title">Activity Feed</span><span class="scr-status"><span class="live-dot"></span>LIVE</span></div>
+                <div class="mini-grid">
+                  <div class="mini-cell"><div class="mini-val" id="kpi-cpm">--</div><div class="mini-lbl">CPM</div></div>
+                  <div class="mini-cell"><div class="mini-val" id="kpi-ctr">--</div><div class="mini-lbl">CTR</div></div>
+                  <div class="mini-cell"><div class="mini-val" id="kpi-cpf">--</div><div class="mini-lbl">CPF</div></div>
+                  <div class="mini-cell"><div class="mini-val" id="kpi-cr">--</div><div class="mini-lbl">Conv.</div></div>
+                </div>
+                <div class="feed-wrap" id="feed" style="margin-top:.5rem;"></div>
+              </div>
+            </div></div>
+            <div class="mon-led"></div>
+          </div>
+          <div class="mon-neck"></div><div class="mon-base"></div>
+        </div>
+      </div>
+
+      <div class="scroll-progress">
+        <div class="sp-track"><div class="sp-fill" id="sp-fill"></div></div>
+        <span class="sp-label" id="sp-label">0%</span>
+      </div>
+    </div>
+
+    <div class="scroll-hint"><div class="sh-line"></div>Scroll to reveal</div>
+  </div>
+</div>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="tick-inner">
+    <span class="t-i">Paid Content Marketing<span class="t-dot"></span></span><span class="t-i">Webinar Funnels<span class="t-dot"></span></span><span class="t-i">DPM Architecture<span class="t-dot"></span></span><span class="t-i">Meta Ads<span class="t-dot"></span></span><span class="t-i">YouTube Growth<span class="t-dot"></span></span><span class="t-i">Creator Growth<span class="t-dot"></span></span><span class="t-i">Email Automation<span class="t-dot"></span></span><span class="t-i">Sales Funnel Design<span class="t-dot"></span></span>
+    <span class="t-i">Paid Content Marketing<span class="t-dot"></span></span><span class="t-i">Webinar Funnels<span class="t-dot"></span></span><span class="t-i">DPM Architecture<span class="t-dot"></span></span><span class="t-i">Meta Ads<span class="t-dot"></span></span><span class="t-i">YouTube Growth<span class="t-dot"></span></span><span class="t-i">Creator Growth<span class="t-dot"></span></span><span class="t-i">Email Automation<span class="t-dot"></span></span><span class="t-i">Sales Funnel Design<span class="t-dot"></span></span>
+  </div>
+</div>
+
+<!-- NUMBERS -->
+<div class="numbers" id="numbers">
+  <div class="num-cell rev"><div class="num-val"><span class="cnt" data-to="150">0</span><sup>+</sup></div><div class="num-lbl">Campaigns managed</div></div>
+  <div class="num-cell rev" style="transition-delay:.15s"><div class="num-val"><span class="cnt" data-to="8">0</span><sup>yr</sup></div><div class="num-lbl">Agency experience</div></div>
+  <div class="num-cell rev" style="transition-delay:.3s"><div class="num-val"><span class="cnt" data-to="3">0</span><sup>x</sup></div><div class="num-lbl">Peak ROAS delivered</div></div>
+</div>
+
+<!-- PINNED PHASES -->
+<div class="pin-section" id="method">
+  <div class="pin-left">
+    <p class="sec-label">The Method</p>
+    <h2 class="pin-title">A five-phase engine that <em>replicates</em> the customer journey.</h2>
+    <p class="pin-body">Every campaign Freuds builds follows the same architecture. Five phases. Each targeting the right person with the right message at the right moment.</p>
+    <div class="phase-tabs">
+      <div class="ptab active" data-phase="0"><span class="ptab-num">01</span><span class="ptab-name">Seed &amp; Awareness</span><div class="ptab-bar"><div class="ptab-bar-fill"></div></div></div>
+      <div class="ptab" data-phase="1"><span class="ptab-num">02</span><span class="ptab-name">Problem Activation</span><div class="ptab-bar"><div class="ptab-bar-fill"></div></div></div>
+      <div class="ptab" data-phase="2"><span class="ptab-num">03</span><span class="ptab-name">Solution &amp; Proof</span><div class="ptab-bar"><div class="ptab-bar-fill"></div></div></div>
+      <div class="ptab" data-phase="3"><span class="ptab-num">04</span><span class="ptab-name">Irresistible Offer</span><div class="ptab-bar"><div class="ptab-bar-fill"></div></div></div>
+      <div class="ptab" data-phase="4"><span class="ptab-num">05</span><span class="ptab-name">Retention &amp; Scale</span><div class="ptab-bar"><div class="ptab-bar-fill"></div></div></div>
+    </div>
+  </div>
+  <div class="pin-right">
+    <div class="ppanel" data-panel="0">
+      <div class="pp-step">Phase 01 · TOFU</div><h3 class="pp-title">Seed &amp; <em>Awareness.</em></h3>
+      <p class="pp-body">Construct audience from scratch. Viral content, broad reach. INT and LAL targeting. The wider the top, the stronger everything below.</p>
+      <div class="pp-monitor"><div class="pp-mon-body"><div class="pp-bezel"><div class="pp-screen-inner">
+        <div class="scr-hd"><span class="scr-title">Targeting · Phase 01</span><span class="scr-status"><span class="live-dot"></span>RUNNING</span></div>
+        <div class="pp-kpi-grid"><div class="pp-kpi"><div class="pp-kpi-val">INT</div><div class="pp-kpi-lbl">Interest</div></div><div class="pp-kpi"><div class="pp-kpi-val">LAL</div><div class="pp-kpi-lbl">Lookalike</div></div><div class="pp-kpi"><div class="pp-kpi-val">BROAD</div><div class="pp-kpi-lbl">Expansion</div></div></div>
+        <div class="bar-row" style="margin-top:.7rem;"><span class="bar-lbl">Video Views</span><div class="bar-track"><div class="bar-fill p0-bar" data-w="90"></div></div><span class="bar-val">90%</span></div>
+        <div class="bar-row"><span class="bar-lbl">Reach</span><div class="bar-track"><div class="bar-fill p0-bar" data-w="100"></div></div><span class="bar-val">MAX</span></div>
+        <div class="pp-led"></div>
+      </div></div></div><div class="pp-neck"></div><div class="pp-base"></div></div>
+    </div>
+    <div class="ppanel" data-panel="1">
+      <div class="pp-step">Phase 02 · TOFU/Brand</div><h3 class="pp-title">Problem <em>Activation.</em></h3>
+      <p class="pp-body">Target: 75% video viewers from Phase 01. Name the problem, explain the cause, offer quick wins.</p>
+      <div class="pp-monitor"><div class="pp-mon-body"><div class="pp-bezel"><div class="pp-screen-inner">
+        <div class="scr-hd"><span class="scr-title">Audience · Phase 02</span><span class="scr-status"><span class="live-dot"></span>ACTIVE</span></div>
+        <div class="big-num sm">75%</div><div class="sub-txt">Video viewer threshold from Phase 01</div>
+        <div class="bar-row" style="margin-top:.6rem;"><span class="bar-lbl">Warm audience</span><div class="bar-track"><div class="bar-fill p1-bar" data-w="75"></div></div><span class="bar-val">75%</span></div>
+        <div class="bar-row"><span class="bar-lbl">Brand recall</span><div class="bar-track"><div class="bar-fill p1-bar" data-w="68"></div></div><span class="bar-val">68%</span></div>
+        <div class="pp-led"></div>
+      </div></div></div><div class="pp-neck"></div><div class="pp-base"></div></div>
+    </div>
+    <div class="ppanel" data-panel="2">
+      <div class="pp-step">Phase 03 · MOFU</div><h3 class="pp-title">Solution <em>&amp; Proof.</em></h3>
+      <p class="pp-body">Case studies. Real numbers. Target: 95% viewers from Phase 02. CTR target: 1.5%+.</p>
+      <div class="pp-monitor"><div class="pp-mon-body"><div class="pp-bezel"><div class="pp-screen-inner">
+        <div class="scr-hd"><span class="scr-title">Performance · Phase 03</span><span class="scr-status"><span class="live-dot"></span>LIVE</span></div>
+        <div class="pp-kpi-grid" style="grid-template-columns:1fr 1fr;"><div class="pp-kpi"><div class="pp-kpi-val">1.7%</div><div class="pp-kpi-lbl">CTR achieved</div></div><div class="pp-kpi"><div class="pp-kpi-val">95%</div><div class="pp-kpi-lbl">Viewer threshold</div></div><div class="pp-kpi"><div class="pp-kpi-val">€8.40</div><div class="pp-kpi-lbl">CPL achieved</div></div><div class="pp-kpi"><div class="pp-kpi-val">2.1x</div><div class="pp-kpi-lbl">ROAS this phase</div></div></div>
+        <div class="pp-led"></div>
+      </div></div></div><div class="pp-neck"></div><div class="pp-base"></div></div>
+    </div>
+    <div class="ppanel" data-panel="3">
+      <div class="pp-step">Phase 04 · BOFU</div><h3 class="pp-title">Irresistible <em>Offer.</em></h3>
+      <p class="pp-body">Scarcity. Urgency. Exclusive access. Target: 75% viewers from Phase 03. High perceived value, near-zero perceived risk.</p>
+      <div class="pp-monitor"><div class="pp-mon-body"><div class="pp-bezel"><div class="pp-screen-inner">
+        <div class="scr-hd"><span class="scr-title">Conversion · Phase 04</span><span class="scr-status"><span class="live-dot"></span>CLOSING</span></div>
+        <div class="big-num sm" id="bofu-roas">0.0x</div><div class="sub-txt">ROAS · target &gt;2.0x</div>
+        <div class="bar-row" style="margin-top:.6rem;"><span class="bar-lbl">Conv. Rate</span><div class="bar-track"><div class="bar-fill p3-bar" data-w="62"></div></div><span class="bar-val">2.4%</span></div>
+        <div class="bar-row"><span class="bar-lbl">Leads closed</span><div class="bar-track"><div class="bar-fill p3-bar" data-w="78"></div></div><span class="bar-val">78%</span></div>
+        <div class="pp-led"></div>
+      </div></div></div><div class="pp-neck"></div><div class="pp-base"></div></div>
+    </div>
+    <div class="ppanel" data-panel="4">
+      <div class="pp-step">Phase 05 · Retention</div><h3 class="pp-title">Retention <em>&amp; Scale.</em></h3>
+      <p class="pp-body">Selling to existing clients costs 5x less. Email flows, retargeting, upsell sequences. The machine compounds.</p>
+      <div class="pp-monitor"><div class="pp-mon-body"><div class="pp-bezel"><div class="pp-screen-inner">
+        <div class="scr-hd"><span class="scr-title">Retention · Phase 05</span><span class="scr-status"><span class="live-dot"></span>COMPOUND</span></div>
+        <div class="pp-kpi-grid"><div class="pp-kpi"><div class="pp-kpi-val">5x</div><div class="pp-kpi-lbl">Cost saving</div></div><div class="pp-kpi"><div class="pp-kpi-val">3</div><div class="pp-kpi-lbl">Email flows</div></div><div class="pp-kpi"><div class="pp-kpi-val">30d</div><div class="pp-kpi-lbl">Retargeting</div></div></div>
+        <div class="bar-row" style="margin-top:.7rem;"><span class="bar-lbl">Email open rate</span><div class="bar-track"><div class="bar-fill p4-bar" data-w="40"></div></div><span class="bar-val">40%</span></div>
+        <div class="bar-row"><span class="bar-lbl">LTV growth</span><div class="bar-track"><div class="bar-fill p4-bar" data-w="92"></div></div><span class="bar-val">HIGH</span></div>
+        <div class="pp-led"></div>
+      </div></div></div><div class="pp-neck"></div><div class="pp-base"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SERVICES -->
+<section class="services" id="services">
+  <p class="sec-label rev">Services</p>
+  <h2 class="sec-h rev">Every system we build is designed to generate <em>revenue,</em> not just attention.</h2>
+  <div class="srv-grid">
+    <div class="srv rev"><div class="srv-n">01</div><div class="srv-title">Paid Content Marketing</div><div class="srv-desc">5-phase funnel across Meta, YouTube, Google and TikTok. From cold audience to closed deal.</div><div class="srv-arr">↗</div></div>
+    <div class="srv rev" style="transition-delay:.1s"><div class="srv-n">02</div><div class="srv-title">Webinar Funnel Architecture</div><div class="srv-desc">Full funnel from ad to close: landing page, email flows, no-show recovery, strategic call system.</div><div class="srv-arr">↗</div></div>
+    <div class="srv rev" style="transition-delay:.2s"><div class="srv-n">03</div><div class="srv-title">Direct Performance Marketing</div><div class="srv-desc">Ad to landing page to qualified call. DPM funnel with 3 email flows and irresistible offer layer.</div><div class="srv-arr">↗</div></div>
+    <div class="srv rev" style="transition-delay:.3s"><div class="srv-n">04</div><div class="srv-title">Creator &amp; Personal Brand Growth</div><div class="srv-desc">YouTube, TikTok, Instagram. 10K in 3 months, 100K in 12. CPF target €1-3. Paid + organic.</div><div class="srv-arr">↗</div></div>
+  </div>
+</section>
+
+<!-- CLIENTS -->
+<section class="clients" id="clients">
+  <div class="clients-intro rev">
+    <p class="sec-label">Clients &amp; Sectors</p>
+    <h2>We've built machines for brands that demand <em>results,</em> not presentations.</h2>
+    <p class="clients-sub">Our founders have built award-winning campaigns across Europe and the Middle East - from Universal Pictures premieres to crypto exchange expansions and luxury real estate funnels. This is a selection of what the system has powered.</p>
+  </div>
+
+  <div class="cli-grid">
+
+    <!-- Universal Pictures -->
+    <div class="cli rev">
+      <svg class="cli-logo" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="22" cy="22" r="20" stroke="rgba(255,106,26,.5)" stroke-width="1.5"/>
+        <ellipse cx="22" cy="22" rx="8" ry="20" stroke="rgba(255,106,26,.35)" stroke-width="1"/>
+        <line x1="2" y1="22" x2="42" y2="22" stroke="rgba(255,106,26,.35)" stroke-width="1"/>
+        <line x1="22" y1="2" x2="22" y2="42" stroke="rgba(255,106,26,.35)" stroke-width="1"/>
+        <circle cx="22" cy="22" r="3" fill="rgba(255,106,26,.6)"/>
+      </svg>
+      <div class="cli-ind">Entertainment</div>
+      <div class="cli-name">Universal Pictures</div>
+      <div class="cli-desc">Influencer campaign for Fast &amp; Furious 10 Austrian premiere. 60 brand ambassadors, exclusive event at Millennium City.</div>
+      <div class="cli-tag">Influencer + Event</div>
+    </div>
+
+    <!-- BingX -->
+    <div class="cli rev" style="transition-delay:.08s">
+      <svg class="cli-logo" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="3" y="3" width="38" height="38" rx="6" stroke="rgba(255,106,26,.5)" stroke-width="1.5"/>
+        <text x="22" y="29" font-family="Montserrat,sans-serif" font-size="18" font-weight="800" fill="rgba(255,106,26,.7)" text-anchor="middle">B</text>
+      </svg>
+      <div class="cli-ind">Crypto / Finance</div>
+      <div class="cli-name">BingX</div>
+      <div class="cli-desc">Performance marketing and social media growth for European market expansion. Multi-channel paid strategy.</div>
+      <div class="cli-tag">Paid Media + Growth</div>
+    </div>
+
+    <!-- Ithaca Protocol -->
+    <div class="cli rev" style="transition-delay:.16s">
+      <svg class="cli-logo" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="22,3 41,34 3,34" stroke="rgba(255,106,26,.5)" stroke-width="1.5" fill="none"/>
+        <polygon points="22,12 34,33 10,33" stroke="rgba(255,106,26,.3)" stroke-width="1" fill="none"/>
+        <circle cx="22" cy="24" r="3" fill="rgba(255,106,26,.6)"/>
+      </svg>
+      <div class="cli-ind">DeFi / Protocol</div>
+      <div class="cli-name">Ithaca Protocol</div>
+      <div class="cli-desc">Brand awareness and community growth strategy for decentralized options protocol. Content funnel and paid distribution.</div>
+      <div class="cli-tag">Brand + Growth</div>
+    </div>
+
+    <!-- Bitwyre -->
+    <div class="cli rev" style="transition-delay:.24s">
+      <svg class="cli-logo" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="3" y="3" width="38" height="38" rx="3" stroke="rgba(255,106,26,.4)" stroke-width="1.5" fill="none"/>
+        <path d="M12 22 L22 12 L32 22 L22 32 Z" stroke="rgba(255,106,26,.6)" stroke-width="1.5" fill="none"/>
+        <path d="M17 22 L22 17 L27 22 L22 27 Z" fill="rgba(255,106,26,.4)"/>
+      </svg>
+      <div class="cli-ind">Crypto Exchange</div>
+      <div class="cli-name">Bitwyre</div>
+      <div class="cli-desc">User acquisition funnel and performance campaigns for institutional-grade crypto exchange. APAC and MENA market focus.</div>
+      <div class="cli-tag">Performance + Funnel</div>
+    </div>
+
+    <!-- Dominic Thiem -->
+    <div class="cli rev" style="transition-delay:.32s">
+      <svg class="cli-logo" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="22" cy="14" r="8" stroke="rgba(255,106,26,.5)" stroke-width="1.5"/>
+        <path d="M8 40 C8 30 36 30 36 40" stroke="rgba(255,106,26,.5)" stroke-width="1.5" fill="none"/>
+        <text x="22" y="18" font-family="Montserrat,sans-serif" font-size="8" font-weight="800" fill="rgba(255,106,26,.7)" text-anchor="middle">DT</text>
+      </svg>
+      <div class="cli-ind">Personal Brand</div>
+      <div class="cli-name">Dominic Thiem</div>
+      <div class="cli-desc">Social media management and influencer activation for Austria's most recognized tennis player and public figure.</div>
+      <div class="cli-tag">Brand + Social</div>
+    </div>
+
+    <!-- Stadelmann -->
+    <div class="cli rev" style="transition-delay:.4s">
+      <svg class="cli-logo" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M5 35 L22 8 L39 35 Z" stroke="rgba(255,106,26,.5)" stroke-width="1.5" fill="none"/>
+        <rect x="15" y="24" width="14" height="11" stroke="rgba(255,106,26,.4)" stroke-width="1" fill="none"/>
+        <rect x="19" y="27" width="6" height="8" fill="rgba(255,106,26,.2)"/>
+      </svg>
+      <div class="cli-ind">Real Estate · DACH</div>
+      <div class="cli-name">Stadelmann Exclusive</div>
+      <div class="cli-desc">Full funnel for Cyprus real estate targeting DACH market. Webinar funnel, paid ads, email automation, sales team leadership.</div>
+      <div class="cli-tag">Full Funnel</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="mq-wrap">
+  <div class="mq">
+    <span class="mq-i">Universal Pictures</span><span class="mq-i">BingX</span><span class="mq-i">Ithaca Protocol</span><span class="mq-i">Bitwyre</span><span class="mq-i">Dominic Thiem</span><span class="mq-i">OBI Austria</span><span class="mq-i">Millennium City</span><span class="mq-i">John Reed</span><span class="mq-i">FH Wien</span><span class="mq-i">TrueYou</span><span class="mq-i">Stadelmann Exclusive</span><span class="mq-i">FOLLOW Austria</span>
+    <span class="mq-i">Universal Pictures</span><span class="mq-i">BingX</span><span class="mq-i">Ithaca Protocol</span><span class="mq-i">Bitwyre</span><span class="mq-i">Dominic Thiem</span><span class="mq-i">OBI Austria</span><span class="mq-i">Millennium City</span><span class="mq-i">John Reed</span><span class="mq-i">FH Wien</span><span class="mq-i">TrueYou</span><span class="mq-i">Stadelmann Exclusive</span><span class="mq-i">FOLLOW Austria</span>
+  </div>
+</div>
+
+<section class="manifesto">
+  <div class="mani-bg">FM</div>
+  <p class="mani-q rev">"While others follow trends, our clients <em>set them.</em> Not because they're lucky - because they have a machine running underneath."</p>
+  <div class="mani-attr rev" style="transition-delay:.3s"><div class="m-line"></div><div class="m-txt">Freuds Marketing · Marketing to lead the market</div></div>
+</section>
+
+<section class="cta">
+  <div class="cta-bg">LEAD</div>
+  <p class="cta-lbl">Start</p>
+  <h2 class="cta-h">Ready to build your <em>machine?</em></h2>
+  <div class="cta-row">
+    <button class="cta-btn">Talk to Roman Sampson ↗</button>
+    <span class="cta-mail">roman@freudsmarketing.com</span>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="fl">Freuds<em>.</em> Marketing</div>
+  <div class="fc">Dubai, UAE · © 2024 · All rights reserved</div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script>
+var gsap=window.gsap, ST=window.ScrollTrigger;
+if(gsap&&ST) gsap.registerPlugin(ST);
+
+function animNum(el,from,to,suf,dur,dec){var s=null;function step(ts){if(!s)s=ts;var p=Math.min((ts-s)/dur,1),e=1-Math.pow(1-p,3),v=from+(to-from)*e;el.textContent=(dec?v.toFixed(dec):Math.floor(v))+suf;if(p<1)requestAnimationFrame(step);}requestAnimationFrame(step);}
+
+function drawLine(id,data,delay,h){setTimeout(function(){var c=document.getElementById(id);if(!c)return;var ctx=c.getContext('2d');c.width=c.offsetWidth||300;c.height=h||80;var w=c.width,ch=c.height,max=Math.max.apply(null,data),step=w/(data.length-1);var g=ctx.createLinearGradient(0,0,0,ch);g.addColorStop(0,'rgba(255,106,26,.22)');g.addColorStop(1,'rgba(255,106,26,0)');ctx.beginPath();data.forEach(function(v,i){var x=i*step,y=ch-(v/max)*ch*.82;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);});ctx.lineTo((data.length-1)*step,ch);ctx.lineTo(0,ch);ctx.closePath();ctx.fillStyle=g;ctx.fill();var d=0;function seg(){if(d>=data.length-1)return;ctx.beginPath();ctx.moveTo(d*step,ch-(data[d]/max)*ch*.82);ctx.lineTo((d+1)*step,ch-(data[d+1]/max)*ch*.82);ctx.strokeStyle='#ff6a1a';ctx.lineWidth=1.8;ctx.stroke();d++;setTimeout(seg,55);}seg();},delay);}
+
+var screenStarted=false;
+function startScreenContent(){
+  if(screenStarted)return; screenStarted=true;
+  document.querySelectorAll('#mon-l .bar-fill').forEach(function(b){b.style.width=b.getAttribute('data-w')+'%';});
+  animNum(document.getElementById('roas-n'),0,2.6,'x',2400,1);
+  var f=document.getElementById('roas-fill');if(f)f.style.width='78%';
+  drawLine('chart-c',[0.4,0.8,0.7,1.1,1.4,1.2,1.8,2.0,1.9,2.4,2.6],400,80);
+  [{id:'kpi-cpm',v:'€6.4'},{id:'kpi-ctr',v:'1.7%'},{id:'kpi-cpf',v:'€1.8'},{id:'kpi-cr',v:'2.3%'}].forEach(function(k,i){setTimeout(function(){var el=document.getElementById(k.id);if(el)el.textContent=k.v;},500+i*260);});
+  [0,1,2,3,4].forEach(function(i){setTimeout(function(){var n=document.getElementById('pn'+i),c=document.getElementById('pc'+i);if(n)n.classList.add('on');if(c)c.classList.add('on');},800+i*300);});
+  ['<em>META</em> · Ad set TOFU · activated','<em>YT</em> · CPF €1.84 · target ✓','<em>META</em> · LAL 2.1M reach','<em>EMAIL</em> · Flow 1 · 847 leads','<em>GOOGLE</em> · CTR 1.6% · above avg'].forEach(function(m,i){setTimeout(function(){var feed=document.getElementById('feed');if(!feed)return;var d=document.createElement('div');d.className='feed-item';d.innerHTML=m;feed.insertBefore(d,feed.firstChild);if(feed.children.length>5)feed.removeChild(feed.lastChild);},900+i*500);});
+  // light up monitor bodies
+  setTimeout(function(){['mb-l','mb-c','mb-r'].forEach(function(id){var el=document.getElementById(id);if(el)el.classList.add('lit');});},300);
+}
+
+if(gsap&&ST){
+  ST.create({
+    trigger:'#hero-pin',
+    start:'top top',
+    end:'bottom bottom',
+    scrub:1.4,
+    onUpdate:function(self){
+      var p=self.progress;
+      var spFill=document.getElementById('sp-fill'),spLabel=document.getElementById('sp-label');
+      if(spFill) spFill.style.width=Math.round(p*100)+'%';
+      if(spLabel) spLabel.textContent=Math.round(p*100)+'%';
+
+      var ml=document.getElementById('mon-l'),mc=document.getElementById('mon-c'),mr=document.getElementById('mon-r');
+      if(!ml||!mc||!mr)return;
+
+      var glow=document.getElementById('hero-glow');
+
+      if(p<0.5){
+        // ENTRANCE: horizontal + scale down from big
+        var t=p/0.5;
+        var ease=1-Math.pow(1-t,4); // stronger ease for more drama
+
+        var scaleL=1.4-0.5*ease;   // 1.4 -> 0.9
+        var scaleC=1.3-0.3*ease;   // 1.3 -> 1.0
+        var scaleR=1.4-0.53*ease;  // 1.4 -> 0.87
+
+        var lX=(-900+900*ease);
+        var cY=(-800+800*ease);
+        var rX=(900-900*ease);
+        var rotL=22-4*ease;
+        var rotR=-22+4*ease;
+        var rotXL=4-2*ease;
+        var rotXC=6-4*ease;
+        var op=Math.min(1,t*1.8);
+
+        ml.style.transform='rotateY('+rotL+'deg) rotateX('+rotXL+'deg) scale('+scaleL+') translateX('+lX+'px)';
+        ml.style.opacity=op;
+        mc.style.transform='translateX(-50%) rotateX('+rotXC+'deg) translateY('+cY+'px) scale('+scaleC+')';
+        mc.style.opacity=op;
+        mr.style.transform='rotateY('+rotR+'deg) rotateX('+rotXL+'deg) scale('+scaleR+') translateX('+rX+'px)';
+        mr.style.opacity=op;
+
+        if(glow) glow.style.opacity=ease*1.5;
+        if(t>0.75) startScreenContent();
+
+      } else {
+        // SETTLED + slow drift apart
+        var t2=(p-0.5)/0.5;
+        var drift=t2*40;
+        var fadeGlow=1-t2*0.5;
+
+        ml.style.transform='rotateY(18deg) rotateX(2deg) scale(.9) translateX(-'+drift+'px)';
+        ml.style.opacity=1;
+        mc.style.transform='translateX(-50%) rotateX(2deg) translateY(0) scale(1)';
+        mc.style.opacity=1;
+        mr.style.transform='rotateY(-18deg) rotateX(2deg) scale(.87) translateX('+drift+'px)';
+        mr.style.opacity=1;
+
+        if(glow) glow.style.opacity=fadeGlow;
+        startScreenContent();
+      }
+    }
+  });
+
+  // float after pin ends
+  ST.create({
+    trigger:'#hero-pin',start:'bottom bottom',once:true,
+    onEnter:function(){
+      ['mon-l','mon-c','mon-r'].forEach(function(id){var el=document.getElementById(id);if(el)el.classList.add('floating');});
+    }
+  });
+
+  // pinned phases
+  var panels=document.querySelectorAll('.ppanel'),tabs=document.querySelectorAll('.ptab'),active=0;
+  function activatePhase(i){if(i===active)return;active=i;tabs.forEach(function(t,ti){t.classList.toggle('active',ti===i);});panels[i].querySelectorAll('.bar-fill').forEach(function(b){b.style.width='0%';setTimeout(function(){b.style.width=b.getAttribute('data-w')+'%';},80);});if(i===3){var br=document.getElementById('bofu-roas');if(br)animNum(br,0,2.8,'x',1800,1);}}
+  setTimeout(function(){document.querySelectorAll('.p0-bar').forEach(function(b){b.style.width=b.getAttribute('data-w')+'%';});},400);
+  panels.forEach(function(p,i){ST.create({trigger:p,start:'top center',end:'bottom center',onEnter:function(){activatePhase(i);},onEnterBack:function(){activatePhase(i);}});});
+  tabs.forEach(function(tab){tab.addEventListener('click',function(){panels[parseInt(tab.getAttribute('data-phase'))].scrollIntoView({behavior:'smooth',block:'center'});});});
+} else {
+  setTimeout(function(){
+    var ml=document.getElementById('mon-l'),mc=document.getElementById('mon-c'),mr=document.getElementById('mon-r');
+    if(ml){ml.style.transform='rotateY(18deg) rotateX(2deg) scale(.9)';ml.style.opacity=1;ml.style.transition='all 1.2s ease';}
+    if(mc){mc.style.transform='translateX(-50%) rotateX(2deg)';mc.style.opacity=1;mc.style.transition='all 1.3s ease';}
+    if(mr){mr.style.transform='rotateY(-18deg) rotateX(2deg) scale(.87)';mr.style.opacity=1;mr.style.transition='all 1.2s ease';}
+    setTimeout(startScreenContent,800);
+  },600);
+}
+
+setInterval(function(){var feed=document.getElementById('feed');if(!feed)return;var arr=['<em>META</em> · New lead · €11.40 CPL','<em>EMAIL</em> · Open rate 41%','<em>YT</em> · +1,200 subs today','<em>META</em> · ROAS 2.8x · BOFU','<em>GOOGLE</em> · Conv 2.4%','<em>BingX</em> · CPL -18% this week','<em>ITHACA</em> · Community +340 today'];var d=document.createElement('div');d.className='feed-item';d.innerHTML=arr[Math.floor(Math.random()*arr.length)];feed.insertBefore(d,feed.firstChild);if(feed.children.length>5)feed.removeChild(feed.lastChild);},3000);
+
+var obs=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');obs.unobserve(e.target);}});},{threshold:.12});
+document.querySelectorAll('.rev').forEach(function(el){obs.observe(el);});
+
+var counted={};
+new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting&&!counted[e.target.id]){counted[e.target.id]=true;e.target.querySelectorAll('.cnt').forEach(function(c){animNum(c,0,parseInt(c.getAttribute('data-to')),'',1600,0);});setTimeout(function(){e.target.querySelectorAll('.num-cell').forEach(function(n){n.classList.add('go');});},400);}});},{threshold:.2}).observe(document.getElementById('numbers'));
+</script>
+</body>
+</html>
