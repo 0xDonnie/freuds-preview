@@ -804,49 +804,56 @@ if(gsap&&ST){
 
 // ── 4. ODOMETER COUNTERS ──
 (function(){
-  function odometer(el,target,duration){
-    var digits=String(target).split('');
-    el.innerHTML='';
-    var cols=[];
-    digits.forEach(function(d){
-      if(isNaN(parseInt(d))){el.appendChild(Object.assign(document.createElement('span'),{textContent:d,style:'display:inline-block;'}));return;}
-      var col=document.createElement('div');
-      col.style.cssText='display:inline-block;overflow:hidden;height:1em;vertical-align:bottom;position:relative;';
-      var inner=document.createElement('div');
-      inner.style.cssText='position:absolute;top:0;left:0;transition:transform '+duration+'ms cubic-bezier(.16,1,.3,1);display:flex;flex-direction:column;';
-      for(var n=9;n>=0;n--){var span=document.createElement('span');span.textContent=n;span.style.cssText='display:block;height:1em;line-height:1;';inner.appendChild(span);}
-      col.appendChild(inner);
-      el.appendChild(col);
-      cols.push({inner:inner,digit:parseInt(d)});
-    });
-    setTimeout(function(){
-      cols.forEach(function(c){c.inner.style.transform='translateY('+c.digit*(-100/10*10)+'%)'});
-    },100);
-    // append suffix if needed
-    var suf=el.getAttribute('data-suf');
-    if(suf){var s=document.createElement('span');s.textContent=suf;s.style.cssText='display:inline-block;margin-left:2px;font-size:.5em;vertical-align:top;padding-top:.15em;opacity:.6;';el.appendChild(s);}
-  }
-  // Mark num-val spans with data attributes for odometer
-  var numCells=document.querySelectorAll('.num-cell');
-  var targets=[150,8,3];
-  var sufs=['+','yr','x'];
-  numCells.forEach(function(cell,i){
-    var cnt=cell.querySelector('.cnt');
-    if(cnt&&targets[i]!==undefined){
-      cnt.setAttribute('data-target',targets[i]);
-      cnt.setAttribute('data-suf',sufs[i]);
+  function rollDigit(digitEl, targetNum, duration, delay) {
+    // Build a column of 0-9 then scroll to target
+    var col = document.createElement('div');
+    col.style.cssText = 'display:inline-block;overflow:hidden;height:1em;vertical-align:bottom;';
+    var inner = document.createElement('div');
+    inner.style.cssText = 'transition:transform '+duration+'ms cubic-bezier(.16,1,.3,1);';
+    // 0 through 9 top to bottom
+    for(var n=0;n<=9;n++){
+      var s=document.createElement('div');
+      s.textContent=n;
+      s.style.cssText='display:block;height:1em;line-height:1;';
+      inner.appendChild(s);
     }
-  });
+    col.appendChild(inner);
+    digitEl.parentNode.replaceChild(col, digitEl);
+    setTimeout(function(){
+      inner.style.transform='translateY(-'+targetNum+'0%)';
+    }, delay+50);
+  }
+
+  var configs=[
+    {selector:'#numbers .num-cell:nth-child(1)', digits:[1,5,0], suffix:'+'},
+    {selector:'#numbers .num-cell:nth-child(2)', digits:[8],     suffix:'yr'},
+    {selector:'#numbers .num-cell:nth-child(3)', digits:[3],     suffix:'x'}
+  ];
+
   var done=false;
   new IntersectionObserver(function(es){
     es.forEach(function(e){
       if(e.isIntersecting&&!done){
         done=true;
-        numCells.forEach(function(cell,i){
-          var cnt=cell.querySelector('.cnt');
-          if(!cnt)return;
-          setTimeout(function(){odometer(cnt,targets[i],1400);},i*200);
-          setTimeout(function(){cell.classList.add('go');},400+i*200);
+        configs.forEach(function(cfg, ci){
+          var cell=document.querySelector(cfg.selector);
+          if(!cell)return;
+          setTimeout(function(){cell.classList.add('go');},400+ci*200);
+          var valEl=cell.querySelector('.num-val');
+          if(!valEl)return;
+          // Clear and rebuild
+          valEl.innerHTML='';
+          cfg.digits.forEach(function(d,di){
+            var placeholder=document.createElement('span');
+            placeholder.textContent='0';
+            valEl.appendChild(placeholder);
+            rollDigit(placeholder, d, 1400, ci*200+di*80);
+          });
+          // Add suffix
+          var sup=document.createElement('sup');
+          sup.textContent=cfg.suffix;
+          sup.style.cssText='font-size:1.3rem;color:rgba(255,150,88,.5);font-weight:700;';
+          valEl.appendChild(sup);
         });
       }
     });
