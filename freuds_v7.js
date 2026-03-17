@@ -19,29 +19,7 @@ function startScreenContent(){
   ['mb-l','mb-c','mb-r'].forEach(function(id){setTimeout(function(){var el=document.getElementById(id);if(el)el.classList.add('lit');},300);});
 }
 
-// ── 1. LENIS ──
-var lenis;
-try{
-  lenis=new Lenis({duration:1.2,easing:function(t){return Math.min(1,1.001-Math.pow(2,-10*t));},smoothWheel:true,wheelMultiplier:1.0});
-  // Single RAF loop - don't connect to gsap.ticker to avoid double-running
-  function lenisRaf(t){lenis.raf(t);requestAnimationFrame(lenisRaf);}
-  requestAnimationFrame(lenisRaf);
-  // Sync ScrollTrigger with Lenis scroll position
-  if(ST){
-    lenis.on('scroll',function(e){ST.update();});
-    ST.scrollerProxy(document.body,{
-      scrollTop:function(v){
-        if(arguments.length){lenis.scrollTo(v,{immediate:true});}
-        return lenis.scroll;
-      },
-      getBoundingClientRect:function(){
-        return{top:0,left:0,width:window.innerWidth,height:window.innerHeight};
-      }
-    });
-    ST.addEventListener('refresh',function(){lenis.resize();});
-    ST.refresh();
-  }
-}catch(e){console.warn('Lenis init:',e);}
+// Lenis removed - native scroll
 
 // ── HERO SCROLL ANIMATION ──
 if(gsap&&ST){
@@ -166,7 +144,7 @@ new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting
   var letters=[document.getElementById('cl-0'),document.getElementById('cl-1'),document.getElementById('cl-2'),document.getElementById('cl-3'),document.getElementById('cl-4'),document.getElementById('cl-5')];
   var mx=window.innerWidth/2,my=window.innerHeight/2,active=false,hideTimer;
   var positions=[];for(var i=0;i<6;i++)positions.push({x:mx,y:my});
-  document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY;active=true;clearTimeout(hideTimer);hideTimer=setTimeout(function(){active=false;letters.forEach(function(l){if(l)l.style.opacity='0';});},1200);});
+  document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY;active=true;clearTimeout(hideTimer);hideTimer=setTimeout(function(){active=false;letters.forEach(function(l){if(l)l.style.opacity='0';});},2000);});
   document.addEventListener('mouseleave',function(){active=false;if(dot)dot.style.opacity='0';letters.forEach(function(l){if(l)l.style.opacity='0';});});
   function lerp(a,b,t){return a+(b-a)*t;}
   function animate(){
@@ -174,9 +152,9 @@ new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting
     if(dot){dot.style.left=mx+'px';dot.style.top=my+'px';}
     if(!active)return;
     for(var i=0;i<6;i++){
-      var lag=0.12-i*0.012;
-      positions[i].x=lerp(positions[i].x,i===0?mx:positions[i-1].x,lag+0.05);
-      positions[i].y=lerp(positions[i].y,i===0?my:positions[i-1].y,lag+0.05);
+      var lag=0.04-i*0.004;
+      positions[i].x=lerp(positions[i].x,i===0?mx:positions[i-1].x,lag+0.018);
+      positions[i].y=lerp(positions[i].y,i===0?my:positions[i-1].y,lag+0.018);
       var letter=letters[i];if(!letter)continue;
       letter.style.left=positions[i].x+'px';
       letter.style.top=(positions[i].y-24-i*4)+'px';
