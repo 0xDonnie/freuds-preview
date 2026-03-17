@@ -22,11 +22,26 @@ function startScreenContent(){
 // ── 1. LENIS ──
 var lenis;
 try{
-  lenis=new Lenis({duration:1.4,easing:function(t){return Math.min(1,1.001-Math.pow(2,-10*t));},smoothWheel:true,wheelMultiplier:0.9});
+  lenis=new Lenis({duration:1.2,easing:function(t){return Math.min(1,1.001-Math.pow(2,-10*t));},smoothWheel:true,wheelMultiplier:1.0});
+  // Single RAF loop - don't connect to gsap.ticker to avoid double-running
   function lenisRaf(t){lenis.raf(t);requestAnimationFrame(lenisRaf);}
   requestAnimationFrame(lenisRaf);
-  if(ST){lenis.on('scroll',ST.update);gsap.ticker.add(function(t){lenis.raf(t*1000);});gsap.ticker.lagSmoothing(0);}
-}catch(e){}
+  // Sync ScrollTrigger with Lenis scroll position
+  if(ST){
+    lenis.on('scroll',function(e){ST.update();});
+    ST.scrollerProxy(document.body,{
+      scrollTop:function(v){
+        if(arguments.length){lenis.scrollTo(v,{immediate:true});}
+        return lenis.scroll;
+      },
+      getBoundingClientRect:function(){
+        return{top:0,left:0,width:window.innerWidth,height:window.innerHeight};
+      }
+    });
+    ST.addEventListener('refresh',function(){lenis.resize();});
+    ST.refresh();
+  }
+}catch(e){console.warn('Lenis init:',e);}
 
 // ── HERO SCROLL ANIMATION ──
 if(gsap&&ST){
