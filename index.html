@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Freuds Marketing - Design Versions</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#060606;color:#f0ebe4;font-family:'Montserrat',sans-serif;min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:4rem 2rem;}
+.hub-label{font-size:9px;letter-spacing:.5em;text-transform:uppercase;color:#ff6a1a;margin-bottom:1rem;font-weight:600;}
+h1{font-size:clamp(2rem,5vw,4rem);font-weight:900;text-transform:uppercase;letter-spacing:-.03em;line-height:1;margin-bottom:.5rem;}
+h1 em{color:#ff6a1a;font-style:normal;}
+.sub{font-family:'DM Mono',monospace;font-size:11px;color:rgba(240,235,228,.3);margin-bottom:4rem;}
+.versions{display:flex;flex-direction:column;gap:0;width:100%;max-width:600px;border:1px solid rgba(255,106,26,.12);}
+.ver{display:flex;align-items:center;justify-content:space-between;padding:1.5rem 2rem;border-bottom:1px solid rgba(255,106,26,.08);text-decoration:none;transition:background .3s;gap:2rem;}
+.ver:last-child{border-bottom:none;}
+.ver:hover{background:rgba(255,106,26,.04);}
+.ver-left{display:flex;align-items:center;gap:1.5rem;}
+.ver-tag{font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,106,26,.4);min-width:40px;}
+.ver-name{font-size:13px;font-weight:600;color:#f0ebe4;letter-spacing:.02em;}
+.ver-desc{font-family:'DM Mono',monospace;font-size:10px;color:rgba(240,235,228,.28);margin-top:.2rem;}
+.ver-arrow{font-size:1rem;color:rgba(255,106,26,.3);transition:all .3s;flex-shrink:0;}
+.ver:hover .ver-arrow{color:#ff6a1a;transform:translate(3px,-3px);}
+.ver.latest .ver-tag{color:#ff6a1a;}
+.ver.latest .ver-name{color:#ff6a1a;}
+.badge{font-size:8px;letter-spacing:.15em;text-transform:uppercase;background:rgba(255,106,26,.12);color:#ff6a1a;padding:.2rem .6rem;border-radius:2px;font-weight:600;}
+.footer-note{margin-top:3rem;font-family:'DM Mono',monospace;font-size:10px;color:rgba(240,235,228,.15);text-align:center;}
+</style>
+</head>
+<body>
+  <p class="hub-label">Freuds Marketing</p>
+  <h1>Design <em>Versions</em></h1>
+  <p class="sub">Internal preview — share link with team</p>
+
+  <div class="versions">
+    <a class="ver" href="freuds_monitors.html">
+      <div class="ver-left">
+        <span class="ver-tag">v1.0</span>
+        <div>
+          <div class="ver-name">Monitors — Playfair Edition</div>
+          <div class="ver-desc">3D monitors · float animation · Playfair Display · pinned phases</div>
+        </div>
+      </div>
+      <span class="ver-arrow">↗</span>
+    </a>
+    <a class="ver" href="freuds_v2.html">
+      <div class="ver-left">
+        <span class="ver-tag">v2.0</span>
+        <div>
+          <div class="ver-name">Monitors — Montserrat Edition</div>
+          <div class="ver-desc">Scroll entrance · Montserrat 900 · uppercase · pinned phases</div>
+        </div>
+      </div>
+      <span class="ver-arrow">↗</span>
+    </a>
+    <a class="ver latest" href="freuds_v3.html">
+      <div class="ver-left">
+        <span class="ver-tag">v3.0</span>
+        <div>
+          <div style="display:flex;align-items:center;gap:.6rem;">
+            <div class="ver-name">Monitors — Horizontal Scroll</div>
+            <span class="badge">Latest</span>
+          </div>
+          <div class="ver-desc">Monitor scroll orizzontale · GSAP scrub · drift parallax · progress bar</div>
+        </div>
+      </div>
+      <span class="ver-arrow">↗</span>
+    </a>
+  </div>
+
+  <p class="footer-note">Freuds Marketing · Dubai, UAE · Internal use only</p>
+</body>
+</html>
